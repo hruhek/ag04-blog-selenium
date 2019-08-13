@@ -1,22 +1,23 @@
 package com.ag04;
 
+import com.ag04.pages.HomePage;
+import com.ag04.pages.ResultsPage;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.support.PageFactory;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class GoogleTestExample {
   private WebDriver driver;
+  private HomePage homePage;
+  private ResultsPage resultsPage;
 
   @BeforeClass
   public static void setupWebdriverBinary() {
@@ -37,13 +38,10 @@ public class GoogleTestExample {
 
   @Test
   public void searchGoogleForAgency04() {
-    driver.get("https://www.google.com");
-    WebElement searchBar = driver.findElement(By.name("q"));
-    searchBar.clear();
-    searchBar.sendKeys("AG04");
-    searchBar.submit();
-    new WebDriverWait(driver, 5).until(ExpectedConditions.urlContains("/search"));
+    homePage = PageFactory.initElements(driver, HomePage.class);
+    resultsPage = homePage.get().searchFor("AG04");
     assertThat(driver.getTitle(), containsString("AG04"));
+    assertThat(resultsPage.getResults().get(0).getText(), containsString("AG04 - Experts in enterprise software development"));
   }
 
 }
